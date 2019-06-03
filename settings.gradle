@@ -1,3 +1,7 @@
 rootProject.name = 'open-cuckoo'
 include 'cuckoo-api'
+include 'cuckoo-all'
+include 'cuckoo-contrib'
+include 'cuckoo-opentracing-shim'
+include 'cuckoo-sdk'
 
