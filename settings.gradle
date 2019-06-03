@@ -5,3 +5,5 @@ include 'cuckoo-contrib'
 include 'cuckoo-opentracing-shim'
 include 'cuckoo-sdk'
 
+project(':cuckoo-all').projectDir = '$rootDir/cuckoo-all' as File
+

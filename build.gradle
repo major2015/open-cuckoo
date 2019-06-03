@@ -1,25 +1,205 @@
-plugins {
-    id 'java'
-    id 'org.jetbrains.kotlin.jvm' version '1.3.31'
+buildscript {
+    repositories {
+        mavenCentral()
+        mavenLocal()
+        maven {
+            url "https://plugins.gradle.org/m2/"
+        }
+    }
+    dependencies {
+        classpath 'ru.vyarus:gradle-animalsniffer-plugin:1.5.0'
+        classpath 'net.ltgt.gradle:gradle-errorprone-plugin:0.0.16'
+        classpath 'com.github.ben-manes:gradle-versions-plugin:0.20.0'
+        classpath "gradle.plugin.com.github.sherter.google-java-format:google-java-format-gradle-plugin:0.8"
+    }
 }
 
-group 'com.iblog'
-version '0.0.1'
+// Display the version report using: ./gradlew dependencyUpdates
+// Also see https://github.com/ben-manes/gradle-versions-plugin.
 
-sourceCompatibility = 1.8
+apply plugin: 'com.github.ben-manes.versions'
 
-repositories {
-    mavenCentral()
-}
+subprojects {
+    apply plugin: 'checkstyle'
+    apply plugin: 'eclipse'
+    apply plugin: 'java'
+    apply plugin: 'java-library'
+    apply plugin: 'idea'
+    apply plugin: 'signing'
+    apply plugin: 'jacoco'
+    // The plugin only has an effect if a signature is specified
+    apply plugin: 'ru.vyarus.animalsniffer'
+    apply plugin: 'com.github.sherter.google-java-format'
+    apply plugin: 'net.ltgt.errorprone'
 
-dependencies {
-    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8"
-    testCompile group: 'junit', name: 'junit', version: '4.12'
-}
+    group 'com.iblog'
+    version '0.0.1'
 
-compileKotlin {
-    kotlinOptions.jvmTarget = "1.8"
-}
-compileTestKotlin {
-    kotlinOptions.jvmTarget = "1.8"
+    sourceCompatibility = 1.8
+    targetCompatibility = 1.8
+
+    repositories {
+        mavenCentral()
+        mavenLocal()
+    }
+
+    [compileJava, compileTestJava].each() {
+        // We suppress the "try" warning because it disallows managing an auto-closeable with
+        // try-with-resources without referencing the auto-closeable within the try block.
+        // We suppress the "processing" warning as suggested in
+        // https://groups.google.com/forum/#!topic/bazel-discuss/_R3A9TJSoPM
+        it.options.compilerArgs += ["-Xlint:all", "-Xlint:-try", "-Xlint:-processing"]
+        it.options.compilerArgs += ["-XepAllDisabledChecksAsWarnings", "-XepDisableWarningsInGeneratedCode"]
+
+        // MutableMethodReturnType can suggest returning Guava types from
+        // API methods (https://github.com/google/error-prone/issues/982).
+        it.options.compilerArgs += ["-Xep:MutableMethodReturnType:OFF"]
+
+        // Doesn't currently use Var annotations.
+        it.options.compilerArgs += ["-Xep:Var:OFF"]
+
+        // ImmutableRefactoring suggests using com.google.errorprone.annotations.Immutable,
+        // but currently uses javax.annotation.concurrent.Immutable
+        it.options.compilerArgs += ["-Xep:ImmutableRefactoring:OFF"]
+
+        // This check causes a NullPointerException
+        // (https://github.com/google/error-prone/issues/1138).
+        it.options.compilerArgs += ["-Xep:NullableDereference:OFF"]
+
+        // ExpectedExceptionRefactoring and TestExceptionRefactoring suggest using
+        // assertThrows, but assertThrows only works well with lambdas.
+        it.options.compilerArgs += ["-Xep:ExpectedExceptionRefactoring:OFF"]
+        it.options.compilerArgs += ["-Xep:TestExceptionRefactoring:OFF"]
+        it.options.encoding = "UTF-8"
+    }
+
+    compileTestJava {
+        // serialVersionUID is basically guaranteed to be useless in tests
+        options.compilerArgs += ["-Xlint:-serial"]
+        // It undeprecates DoubleSubject.isEqualTo(Double).
+        options.compilerArgs += ["-Xlint:-deprecation"]
+    }
+
+    jar.manifest {
+        attributes('Implementation-Title': name,
+                'Implementation-Version': version,
+                'Built-By': System.getProperty('user.name'),
+                'Built-JDK': System.getProperty('java.version'),
+                'Source-Compatibility': sourceCompatibility,
+                'Target-Compatibility': targetCompatibility)
+    }
+
+    javadoc.options {
+        encoding = 'UTF-8'
+        links 'https://docs.oracle.com/javase/8/docs/api/'
+    }
+
+    ext {
+        findBugsJsr305Version = '3.0.2'
+        errorProneVersion = '2.3.2'
+        grpcVersion = '1.20.0'
+        autoValueVersion = '1.6.2'
+        opentracingVersion = '0.33.0'
+        guavaVersion = '26.0-android'
+
+        libraries = [
+                auto_value: "com.google.auto.value:auto-value:${autoValueVersion}",
+                auto_value_annotation: "com.google.auto.value:auto-value-annotations:${autoValueVersion}",
+                errorprone_annotation: "com.google.errorprone:error_prone_annotations:${errorProneVersion}",
+                grpc_context: "io.grpc:grpc-context:${grpcVersion}",
+                jsr305: "com.google.code.findbugs:jsr305:${findBugsJsr305Version}",
+
+                // Compatibility layer
+                opentracing: "io.opentracing:opentracing-api:${opentracingVersion}",
+
+                // Test dependencies.
+                guava_testlib: "com.google.guava:guava-testlib:${guavaVersion}",
+                junit: 'junit:junit:4.12',
+                mockito: 'org.mockito:mockito-core:2.25.1',
+                truth: 'com.google.truth:truth:0.44',
+        ]
+    }
+
+    configurations {
+        compile {
+            // Detect Maven Enforcer's dependencyConvergence failures. We only
+            // care for artifacts used as libraries by others.
+            resolutionStrategy.failOnVersionConflict()
+        }
+    }
+    
+    dependencies {
+        api libraries.auto_value_annotation,
+                libraries.errorprone_annotation,
+                libraries.jsr305
+
+        testImplementation libraries.junit,
+                libraries.mockito,
+                libraries.truth,
+                libraries.guava_testlib
+
+        // The ErrorProne plugin defaults to the latest, which would break our
+        // build if error prone releases a new version with a new check
+        errorprone "com.google.errorprone:error_prone_core:${errorProneVersion}"
+
+        testCompile group: 'junit', name: 'junit', version: '4.12'
+    }
+
+    checkstyle {
+        configFile = file("$rootDir/buildscripts/checkstyle.xml")
+        toolVersion = "8.12"
+        ignoreFailures = false
+        if (rootProject.hasProperty("checkstyle.ignoreFailures")) {
+            ignoreFailures = rootProject.properties["checkstyle.ignoreFailures"].toBoolean()
+        }
+        configProperties["rootDir"] = rootDir
+    }
+
+    googleJavaFormat {
+        toolVersion '1.7'
+    }
+
+    afterEvaluate {
+        // Allow subproject to add more source sets.
+        tasks.googleJavaFormat {
+            source = sourceSets*.allJava
+            include '**/*.java'
+        }
+
+        tasks.verifyGoogleJavaFormat {
+            source = sourceSets*.allJava
+            include '**/*.java'
+        }
+    }
+
+    signing {
+        required false
+        sign configurations.archives
+    }
+
+    task javadocJar(type: Jar) {
+        classifier = 'javadoc'
+        from javadoc
+    }
+
+    task sourcesJar(type: Jar) {
+        classifier = 'sources'
+        from sourceSets.main.allSource
+    }
+
+    artifacts {
+        archives javadocJar, sourcesJar
+    }
+
+    // At a test failure, log the stack trace to the console so that we don't
+    // have to open the HTML in a browser.
+    test {
+        testLogging {
+            exceptionFormat = 'full'
+            showExceptions true
+            showCauses true
+            showStackTraces true
+        }
+        maxHeapSize = '1500m'
+    }
 }
