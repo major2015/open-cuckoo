@@ -1,9 +1,25 @@
+/*
+ * Copyright 2019, OpenCuckoo Authors
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package com.iblog.cuckoo.internal;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.util.List;
 import java.util.Map;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 /**
  * General internal utility methods.
@@ -12,12 +28,12 @@ public final class Utils {
     private Utils() {}
 
     /**
-     * Throws an {@link IllegalArgumentException} if the argument is false. This method is similar to
-     * {@code Preconditions.checkArgument(boolean, Object)} from Guava.
+     * Throws an {@link IllegalArgumentException} if the argument is false. This method is similar
+     * to {@code Preconditions.checkArgument(boolean, Object)} from Guava.
      *
      * @param isValid whether the argument check passed.
-     * @param errorMessage the message to use for the exception. will be converted to a string using
-     *                     {@link String#valueOf(Object)}.
+     * @param errorMessage the message to use for the exception. will be converted to a string
+     *      using {@link String#valueOf(Object)}.
      */
     public static void checkArgument(boolean isValid, @Nullable Object errorMessage) {
         if (!isValid) {
@@ -26,8 +42,8 @@ public final class Utils {
     }
 
     /**
-     * Throws an {@link IllegalArgumentException} if the argument is false. This method is similar to
-     * {@code Preconditions.checkArgument(boolean, Object)} from Guava.
+     * Throws an {@link IllegalArgumentException} if the argument is false. This method is similar
+     * to {@code Preconditions.checkArgument(boolean, Object)} from Guava.
      *
      * @param expression a boolean expression
      * @param errorMessageTemplate a template for the exception message should the check fail. The
@@ -44,15 +60,15 @@ public final class Utils {
     public static void checkArgument(
         boolean expression,
         String errorMessageTemplate,
-        @Nonnull Object errorMessageArgs) {
+        @Nonnull Object... errorMessageArgs) {
         if (!expression) {
             throw new IllegalArgumentException(format(errorMessageTemplate, errorMessageArgs));
         }
     }
 
     /**
-     * Throws an {@link IllegalStateException} if the argument  is false. This method is similar to
-     * {@code Preconditions.checkState(boolean, Object)} from Guava.
+     * Throws an {@link IllegalStateException} if the argument  is false. This method is similar
+     * to {@code Preconditions.checkState(boolean, Object)} from Guava.
      *
      * @param isValid whether the state check passed.
      * @param errorMessage the message to use for the exception. will be converted to a string
@@ -89,8 +105,8 @@ public final class Utils {
      * to {@code Preconditions.checkNotNull(Object, Object)} from Guava.
      *
      * @param arg the argument to check for null.
-     * @param errorMessage the message to use for the exception. Will be converted to a string using
-     *                     {@link String#valueOf(Object)}.
+     * @param errorMessage the message to use for the exception. Will be converted to a string
+     *                   using {@link String#valueOf(Object)}.
      * @param <T> Type of an argument to check.
      * @return the argument, if it pass the null check.
      */
@@ -156,8 +172,8 @@ public final class Utils {
      * <p>Copied from {@code Preconditions.format(String, Object...)} from Guava </p>
      *
      * @param template a non-null string containing 0 or more {@code %s} placeholders.
-     * @param args the arguments to be substituted into the message template. Arguments are converted
-     *   to strings using {@link String#valueOf(Object)}. Arguments can be null.
+     * @param args the arguments to be substituted into the message template. Arguments are
+     *      converted to strings using {@link String#valueOf(Object)}. Arguments can be null.
      * @return
      */
     // Note that this is somewhat-improperly used from Verify.java as well.
