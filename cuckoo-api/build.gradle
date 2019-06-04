@@ -10,5 +10,5 @@ dependencies {
 }
 
 javadoc {
-    exclude 'com/iblog/cuckoo/internal/**'
+    exclude 'com/cuckoo/internal/**'
 }

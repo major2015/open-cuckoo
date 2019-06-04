@@ -14,10 +14,24 @@
  * limitations under the License.
  */
 
+package com.cuckoo.internal;
+
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.JUnit4;
+
 /**
- *  Api for associating tags scoped operations.
- *
- *  <p>This package manages a set of tags in the {@code io.grpc.Context}. The tags can be used to
- *  label anything that is associated with a specific. For example, the {@code }</p>
+ * Tests for {@link StringUtils}.
  */
-package com.iblog.cuckoo.tags;
+@RunWith(JUnit4.class)
+public class StringUtilsTest {
+
+    @Test
+    public void isPrintableString() {
+        assertTrue(StringUtils.isPrintableString("abcd"));
+        assertFalse(StringUtils.isPrintableString("\2ab\3cd"));
+    }
+}

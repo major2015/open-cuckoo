@@ -14,8 +14,6 @@
  * limitations under the License.
  */
 
-package com.iblog.cuckoo;
-
 /**
  * TODO .
  */

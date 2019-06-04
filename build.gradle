@@ -32,7 +32,7 @@ subprojects {
     apply plugin: 'com.github.sherter.google-java-format'
     apply plugin: 'net.ltgt.errorprone'
 
-    group 'com.iblog'
+    group 'com.cockoo'
     version '0.0.1'
 
     sourceCompatibility = 1.8
@@ -141,8 +141,6 @@ subprojects {
         // The ErrorProne plugin defaults to the latest, which would break our
         // build if error prone releases a new version with a new check
         errorprone "com.google.errorprone:error_prone_core:${errorProneVersion}"
-
-        testCompile group: 'junit', name: 'junit', version: '4.12'
     }
 
     checkstyle {
@@ -159,8 +157,7 @@ subprojects {
         toolVersion '1.7'
     }
 
-    afterEvaluate {
-        // Allow subproject to add more source sets.
+    afterEvaluate { // Allow subproject to add more source sets.
         tasks.googleJavaFormat {
             source = sourceSets*.allJava
             include '**/*.java'

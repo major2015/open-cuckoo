@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.iblog.cuckoo.internal;
+package com.cuckoo.internal;
 
 import org.junit.Rule;
 import org.junit.Test;
