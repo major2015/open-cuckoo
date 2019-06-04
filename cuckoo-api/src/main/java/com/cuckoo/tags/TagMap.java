@@ -17,7 +17,10 @@
 package com.cuckoo.tags;
 
 import java.util.Iterator;
+import javax.annotation.Nullable;
 import javax.annotation.concurrent.Immutable;
+
+import com.cuckoo.context.Scope;
 
 /**
  * A map from {@link TagKey} to {@link TagValue} and {@link TagMetadata} that can be used to label
@@ -40,9 +43,28 @@ public interface TagMap {
     Iterator<Tag> getIterator();
 
     /**
+     * Returns the {@code TagValue} associated with the given {@code TagKey}.
      *
+     * @param tagKey tag key to return the value for.
+     * @return the {@code TagValue} associated with the given {@code TagKey}, or {@code null} if no
+     *      {@code Tag} with the given {@code tagKey} is in this {@code TagMap}
+     */
+    @Nullable
+    TagValue getTagValue(TagKey tagKey);
+
+    /**
+     * Builder for the {@link TagMap} class.
+     *
+     * @since 0.0.1
      */
     interface Builder {
+        /**
+         * Sets the parent {@code TagMap} to use. If not set, the value of
+         * {@code Tagger.getCurrentTagMap()}
+         *
+         * @param parent
+         * @return
+         */
         Builder setParent(TagMap parent);
 
         Builder setNoParent();
@@ -53,6 +75,6 @@ public interface TagMap {
 
         TagMap build();
 
-
+        Scope buildScoped();
     }
 }
