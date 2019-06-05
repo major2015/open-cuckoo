@@ -45,7 +45,7 @@ class TagMapInScope implements Scope {
     }
 
     @Override
-    public void close() throws IOException {
+    public void close() {
         Context.current().detach(orig);
     }
 }

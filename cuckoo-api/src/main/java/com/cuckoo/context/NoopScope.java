@@ -33,5 +33,5 @@ public final class NoopScope implements Scope {
     public static final Scope INSTANCE = new NoopScope();
 
     @Override
-    public void close() throws IOException {}
+    public void close() {}
 }

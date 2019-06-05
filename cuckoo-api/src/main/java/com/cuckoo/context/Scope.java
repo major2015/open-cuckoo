@@ -35,5 +35,5 @@ import java.io.IOException;
  */
 public interface Scope extends Closeable {
     @Override
-    void close() throws IOException;
+    void close();
 }
