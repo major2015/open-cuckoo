@@ -127,12 +127,36 @@ public interface Tagger {
      *                  public void put(HttpURRLConnection carrier, String key, String value) {
      *                      carrier.setRequestProperty(field, value);
      *                  }
-     *              }
+     *              };
+     *          void makeHttpRequest() {
+     *              HttpURLConnection = (HttpURLConnection) new URL("http://myserver").openConnection();
+     *              textFormat.inject(tagger.getCurrentTagMap(), Connection, httpURLConnectionSetter);
+     *              // Send the request, wait for response and maybe set the status if not ok.
+     *          }
      *     }
      *     </pre>
      * </p>
      *
-     * @return
+     * <p>
+     *     Example of usage on the server:
+     *
+     *     <pre>
+     *         private static final Tagger tagger = OpenCuckoo.getTagger();
+     *         private static final HttpTextFormat textFormat = OpenCuckoo.getTagger()
+     *              .getHttpTextFormat();
+     *         private static final HttpTextFormat.Getter<HttpRequest> getter = ...;
+     *
+     *         void onRequestReceived(HttpRequest request) {
+     *             TagMap tagMap = textFormat.extract(request, getter);
+     *             try (Scope s = tagger.withTagMap(tagMap)) {
+     *                  // Handle request and send response back.
+     *             }
+     *         }
+     *     </pre>
+     * </p>
+     *
+     * @return the {@code HttpTextFormat} for this implementation
+     * @since 0.0.1
      */
     HttpTextFormat<TagMap> getHttpTextFormat();
 }
