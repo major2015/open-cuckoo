@@ -16,5 +16,5 @@
 
 package com.cuckoo.context.propagation;
 
-public class TraceContextFormat implements HttpTextFormat {
+public abstract class TraceContextFormat implements HttpTextFormat {
 }

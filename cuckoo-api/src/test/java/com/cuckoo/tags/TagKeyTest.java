@@ -27,9 +27,8 @@ import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 
-/** Tests for {@link TagValue}. */
 @RunWith(JUnit4.class)
-public final class TagValueTest {
+public final class TagKeyTest {
     @Rule
     public final ExpectedException thrown = ExpectedException.none();
 
@@ -39,39 +38,44 @@ public final class TagValueTest {
     }
 
     @Test
-    public void testAsString() {
-        assertThat(TagValue.create("foo").asString()).isEqualTo("foo");
+    public void testGetName() {
+        assertThat(TagKey.create("foo").getName()).isEqualTo("foo");
     }
 
     @Test
-    public void create_AllowTagValueWithMaxLength() {
-        char[] chars = new char[TagValue.MAX_LENGTH];
-        Arrays.fill(chars, 'v');
-        String value = new String(chars);
-        assertThat(TagValue.create(value).asString()).isEqualTo(value);
+    public void create_AllowTagKeyNameWithMaxLength() {
+        char[] chars = new char[TagKey.MAX_LENGTH];
+        Arrays.fill(chars, 'k');
+        String name = new String(chars);
+        assertThat(TagKey.create(name).getName()).isEqualTo(name);
     }
 
     @Test
-    public void create_DisallowTagValueOverMaxLength() {
-        char[] chars = new char[TagValue.MAX_LENGTH + 1];
-        Arrays.fill(chars, 'v');
-        String value = new String(chars);
+    public void create_DisallowTagKeyNameOverMaxLength() {
+        char[] chars = new char[TagKey.MAX_LENGTH + 1];
+        Arrays.fill(chars, 'k');
+        String name = new String(chars);
         thrown.expect(IllegalArgumentException.class);
-        TagValue.create(value);
+        TagKey.create(name);
     }
 
     @Test
-    public void disallowTagValueWithUnprintableChars() {
-        String value = "\2ab\3cd";
+    public void create_DisallowUnprintableChars() {
         thrown.expect(IllegalArgumentException.class);
-        TagValue.create(value);
+        TagKey.create("\2ab\3cd");
     }
 
     @Test
-    public void testTagValueEquals() {
+    public void createString_DisallowEmpty() {
+        thrown.expect(IllegalArgumentException.class);
+        TagKey.create("");
+    }
+
+    @Test
+    public void testTagKeyEquals() {
         new EqualsTester()
-            .addEqualityGroup(TagValue.create("foo"), TagValue.create("foo"))
-            .addEqualityGroup(TagValue.create("bar"))
+            .addEqualityGroup(TagKey.create("foo"), TagKey.create("foo"))
+            .addEqualityGroup(TagKey.create("bar"))
             .testEquals();
     }
 }
