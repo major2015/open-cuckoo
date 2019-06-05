@@ -1,0 +1,51 @@
+/*
+ * Copyright 2019, OpenCuckoo Authors
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package com.cuckoo.tags.unsafe;
+
+import java.io.IOException;
+
+import com.cuckoo.context.Scope;
+import com.cuckoo.tags.TagMap;
+import io.grpc.Context;
+
+/**
+ * A scope that manages the {@link Context} for a {@link TagMap}.
+ *
+ * @since 0.0.1
+ */
+class TagMapInScope implements Scope {
+    private final Context orig;
+
+    private TagMapInScope(TagMap tags) {
+        this.orig = ContextUtils.withValue(tags).attach();
+    }
+
+    /**
+     * Constructs a new {@link TagMapInScope}.
+     *
+     * @param tags the {@code TagMap} to be added to the current {@code Context}.
+     * @return
+     */
+    static TagMapInScope create(TagMap tags) {
+        return new TagMapInScope(tags);
+    }
+
+    @Override
+    public void close() throws IOException {
+        Context.current().detach(orig);
+    }
+}

@@ -60,21 +60,66 @@ public interface TagMap {
     interface Builder {
         /**
          * Sets the parent {@code TagMap} to use. If not set, the value of
-         * {@code Tagger.getCurrentTagMap()}
+         * {@code Tagger.getCurrentTagMap()} at {@link #build()} or {@link #buildScoped()}
+         * time will be used as parent.
          *
-         * @param parent
-         * @return
+         * <p>This <b>must</b> be used to create a {@code TagMap} when manual Context propagation
+         * is used.
+         *
+         * <p>If called multiple times, only the last specified value will be used.
+         *
+         * @param parent the {@code TagMap} used as parent.
+         * @return this.
+         * @throws NullPointerException if {@code parent} is {@code null}.
+         * @see @setNoParent()
+         * @since 0.0.1
          */
         Builder setParent(TagMap parent);
 
+        /**
+         * Sets the option to become a {@code TagMap} with no parent. If not set, the value of
+         * {@code Tagger.getCurrentTagMap()} at {@link #build()} or {@link #buildScoped()} time
+         * will be used as parent.
+         *
+         * @return this.
+         * @since 0.0.1
+         */
         Builder setNoParent();
 
+        /**
+         * Adds the key/value pair and metadata regardless of whether the key is present.
+         *
+         * @param key the {@code TagKey} which will be set.
+         * @param value the {@code TagValue} to set for the given key.
+         * @param tagMetadata the {@code TagMetadata} associated with this {@link Tag}.
+         * @return this
+         * @since 0.0.1
+         */
         Builder put(TagKey key, TagValue value, TagMetadata tagMetadata);
 
+        /**
+         * Removes the key if exists.
+         *
+         * @param key the {@code TagKey} which will be removed.
+         * @return this
+         */
         Builder remove(TagKey key);
 
+        /**
+         * Creates a {@code TagMap} from this builder.
+         *
+         * @return a {@code TagMap} with the same tags as this builder.
+         */
         TagMap build();
 
+        /**
+         * Enters the scope of code where the {@link TagMap} created from this builder
+         * is in the current context an returns and object that represents that scope.
+         * The scope is exited when the returned object is closed.
+         *
+         * @return an object that defines a scope where the {@code TagMap} created from
+         * this builder is set the current context.
+         */
         Scope buildScoped();
     }
 }

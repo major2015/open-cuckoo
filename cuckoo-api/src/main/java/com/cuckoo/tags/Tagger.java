@@ -58,7 +58,7 @@ public interface Tagger {
      *      context.
      * @since 0.0.1
      */
-    Scope withTagmap(TagMap tags);
+    Scope withTagMap(TagMap tags);
 
     /**
      * Returns the {@link BinaryFormat} for this implementation.

@@ -20,6 +20,14 @@ import javax.annotation.concurrent.Immutable;
 
 import com.google.auto.value.AutoValue;
 
+/**
+ * {@link TagMetadata} contains properties associated with a {@link Tag}.
+ *
+ * <p>For now only the property {@link TagTtl} is defined. In future, additional properties may be
+ * added to address specific situations.
+ *
+ * @since 0.0.1
+ */
 @Immutable
 @AutoValue
 public abstract class TagMetadata {
