@@ -21,7 +21,7 @@ import javax.annotation.concurrent.Immutable;
 import com.google.auto.value.AutoValue;
 
 /**
- * {@link }
+ * {@link TagKey} paired with a {@link TagValue}.
  *
  * @since 0.0.1
  */
@@ -35,10 +35,36 @@ public abstract class Tag {
 
     Tag() {}
 
-    public static Tag create() {
+    /**
+     * Returns the tag's key.
+     *
+     * @return the tag's key.
+     */
+    public abstract TagKey getKey();
 
+    /**
+     * Returns the tag's value.
+     *
+     * @return the tag's value.
+     */
+    public abstract TagValue getValue();
+
+    /**
+     * Returns the {@link TagMetadata} associated with this {@link Tag}.
+     *
+     * @return the {@code TagMetadata}.
+     */
+    public abstract TagMetadata getTagMetadata();
+
+    /**
+     * Creates a {@code Tag} from the given key, value and metadata.
+     *
+     * @param key the tag key.
+     * @param value the tag value.
+     * @param tagMetadata the tag metadata.
+     * @return a {@code Tag}.
+     */
+    public static Tag create(TagKey key, TagValue value, TagMetadata tagMetadata) {
+        return new AutoValue_Tag(key, value, tagMetadata);
     }
-
-
-
 }
