@@ -21,10 +21,12 @@ import java.util.List;
 import javax.annotation.concurrent.Immutable;
 import javax.annotation.concurrent.ThreadSafe;
 
+import com.cuckoo.context.NoopScope;
 import com.cuckoo.context.Scope;
 import com.cuckoo.context.propagation.BinaryFormat;
 import com.cuckoo.context.propagation.HttpTextFormat;
 import com.cuckoo.internal.Utils;
+import com.cuckoo.tags.unsafe.ContextUtils;
 
 /**
  * No-op implementations of {@link Tagger}.
@@ -48,27 +50,66 @@ public final class DefaultTagger implements Tagger {
 
     @Override
     public TagMap getCurrentTagMap() {
-        return null;
+        return ContextUtils.getValue();
     }
 
     @Override
     public TagMap.Builder tagMapBuilder() {
-        return null;
+        return new NoopTagMapBuilder();
     }
 
     @Override
     public Scope withTagMap(TagMap tags) {
-        return null;
+        return ContextUtils.withTagMap(tags);
     }
 
     @Override
     public BinaryFormat<TagMap> getBinaryFormat() {
-        return null;
+        return BINARY_FORMAT;
     }
 
     @Override
     public HttpTextFormat<TagMap> getHttpTextFormat() {
-        return null;
+        return HTTP_TEXT_FORMAT;
+    }
+
+    @Immutable
+    private static final class NoopTagMapBuilder implements TagMap.Builder {
+
+        @Override
+        public TagMap.Builder setParent(TagMap parent) {
+            Utils.checkNotNull(parent, "parent");
+            return this;
+        }
+
+        @Override
+        public TagMap.Builder setNoParent() {
+            return this;
+        }
+
+        @Override
+        public TagMap.Builder put(TagKey key, TagValue value, TagMetadata tagMetadata) {
+            Utils.checkNotNull(key, "key");
+            Utils.checkNotNull(value, "value");
+            Utils.checkNotNull(tagMetadata, "tagMetadata");
+            return this;
+        }
+
+        @Override
+        public TagMap.Builder remove(TagKey key) {
+            Utils.checkNotNull(key, "key");
+            return this;
+        }
+
+        @Override
+        public TagMap build() {
+            return EmptyTagMap.INSTANCE;
+        }
+
+        @Override
+        public Scope buildScoped() {
+            return NoopScope.INSTANCE;
+        }
     }
 
     @Immutable
