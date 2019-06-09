@@ -58,7 +58,7 @@ final class BigendianEncoding {
      * @return the {@code long} value whose big-endian representation is given.
      * @throws IllegalArgumentException if {@code bytes} has fewer than 8 elements.
      */
-    static long longFormByteArray(byte[] bytes, int offset) {
+    static long longFromByteArray(byte[] bytes, int offset) {
         Utils.checkArgument(bytes.length >= offset + LONG_BYTES, "array too small");
         return (bytes[offset] & 0XFFL) << 56
             | (bytes[offset + 1] & 0xFFL) << 48

@@ -28,7 +28,7 @@ import com.cuckoo.internal.Utils;
  * @since 0.0.1
  */
 @Immutable
-public class TraceId implements Comparable<TraceId> {
+public final class TraceId implements Comparable<TraceId> {
 
     private static final int SIZE = 16;
     private static final int BASE16_SIZE = 2 * BigendianEncoding.LONG_BASE16;
@@ -92,8 +92,8 @@ public class TraceId implements Comparable<TraceId> {
     public static TraceId fromBytes(byte[] src, int srcOffset) {
         Utils.checkNotNull(src, "src");
         return new TraceId(
-            BigendianEncoding.longFormByteArray(src, srcOffset),
-            BigendianEncoding.longFormByteArray(src, srcOffset + BigendianEncoding.LONG_BYTES));
+            BigendianEncoding.longFromByteArray(src, srcOffset),
+            BigendianEncoding.longFromByteArray(src, srcOffset + BigendianEncoding.LONG_BYTES));
     }
 
     /**
