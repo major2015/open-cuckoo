@@ -14,27 +14,29 @@
  * limitations under the License.
  */
 
-package com.cuckoo.context.propagation;
+package com.cuckoo.trace;
 
-import java.util.List;
+import java.util.Map;
+import javax.annotation.concurrent.ThreadSafe;
 
 /**
- * Implementation of the TraceContext propagation protocol. See
- * <a href=https://github.com/w3c/distributed-tracing>w3c/distributed-tracing</a>
+ * A text annotation with a set of attributes.
+ *
+ * @since 0.0.1
  */
-public class TraceContextFormat implements HttpTextFormat {
-    @Override
-    public List<String> fields() {
-        return null;
-    }
+@ThreadSafe
+public interface Event {
+    /**
+     * Return the name of the {@code Event}.
+     *
+     * @return the name of the {@code Event}.
+     */
+    String getName();
 
-    @Override
-    public Object extract(Object carrier, Getter getter) {
-        return null;
-    }
-
-    @Override
-    public void inject(Object value, Object carrier, Setter setter) {
-
-    }
+    /**
+     * Return the attributes of the {@code Event}.
+     *
+     * @return the attributes of the {@code Event}.
+     */
+    Map<String, AttributeValue> getAttributes();
 }

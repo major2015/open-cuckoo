@@ -14,27 +14,7 @@
  * limitations under the License.
  */
 
-package com.cuckoo.context.propagation;
+package com.cuckoo.trace;
 
-import java.util.List;
-
-/**
- * Implementation of the TraceContext propagation protocol. See
- * <a href=https://github.com/w3c/distributed-tracing>w3c/distributed-tracing</a>
- */
-public class TraceContextFormat implements HttpTextFormat {
-    @Override
-    public List<String> fields() {
-        return null;
-    }
-
-    @Override
-    public Object extract(Object carrier, Getter getter) {
-        return null;
-    }
-
-    @Override
-    public void inject(Object value, Object carrier, Setter setter) {
-
-    }
+public abstract class AttributeValue {
 }
