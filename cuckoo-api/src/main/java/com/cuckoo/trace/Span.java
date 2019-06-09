@@ -109,7 +109,7 @@ public interface Span {
      * @param key the key for this attribute.
      * @param value the value for this attribute.
      */
-    void setattribute(String key, boolean value);
+    void setAttribute(String key, boolean value);
 
     /**
      * Sets an attribute to the {@code Span}. If the {@code Span} previously contained a mapping
@@ -173,11 +173,110 @@ public interface Span {
      */
     void addLink(Link link);
 
-    void setStatus()
+    /**
+     * Sets the {@link Status} to the {@code Span}.
+     *
+     * <p>If used, this will override the default {@code Span} status. Default is
+     * {@link Status#OK}.
+     *
+     * <p>Only the value of last call will be recorded, and implementations are free to ignore
+     * previous calls.
+     *
+     * @param status the {@link Status} to set.
+     */
+    void setStatus(Status status);
 
+    /**
+     * Marks the end of {@code Span} execution.
+     *
+     * <p>Only the timing of the first end call for a given {@code Span} will be recorded, and
+     * implementations are free to ignore all further calls.
+     */
     void end();
 
+    /**
+     * Updates the {@code Span} name.
+     *
+     * <p>If used, this will override the name provided via {@code Span.Builder}.
+     *
+     * <p>Upon this update, any sampling behavior based on {@code Span} name will depend on the
+     * implementation.
+     *
+     * @param name
+     */
+    void updateName(String name);
+
+    /**
+     * Returns the {@code SpanContext} associated with this {@code Span}.
+     *
+     * @return the {@code SpanContext} associated with this {@code Span}.
+     */
+    SpanContext getContext();
+
+    /**
+     * Returns {@code true} if this {@code Span} records events (e.g., {@link #addEvent(String)}.
+     *
+     * @return {@code true} if this {@code Span} records events.
+     */
+    boolean isRecordingEvents();
+
     interface Builder {
+        /**
+         * Sets the parent {@code Span} to use. If not set, the value of
+         * {@code Tracer.GetCurrentSpan()} at {@link #startSapn()} time will be used as parent.
+         *
+         * <p>This <b>must</b> be used to create a {@code Span} when manual Context propagation is
+         * used OR when creating a root {@code Span} with a parent with an invalid
+         * {@link SpanContext}.
+         *
+         * <p>Observe this is the preferred method when the parent is a {@code Span} created within
+         * the process. Using its {@code SpanContext} as parent remains as a valid, albeit
+         * inefficient, operation.
+         *
+         * <p>If called multiple times, only the last specified value will be used. Observe that
+         * the state defined by a previous call to {@link #setNoParent()} will be discarded.
+         *
+         * @param parent the {@code Span} used to parent.
+         * @return this.
+         * @throws NullPointerException if {@code parent} is {@code null}.
+         * @see #setNoParent()
+         */
+        Builder setParent(Span parent);
+
+        /**
+         * Sets the parent {@link SpanContext} to use. If not set, the value of
+         * {@code Tracer.getCurrentSpan()} at {@link #startSapn()} time will be used as parent.
+         *
+         * <p>Similar to {@link #setParent(Span parent)} but this <b>must</b> be used to create a
+         * {@code Span} when the parent is in a different process. This is only intended for use by
+         * RPC systems or similar.
+         *
+         * <p>If no {@link SpanContext} is available, users must call {@link #setNoParent()} in
+         * order to create a root {@code Span} for a new trace.
+         *
+         * <p>If called multiple times, only last specified value will be used. Observe that the
+         * state defined by a previous call to {@link #setNoParent()} will be discarded.
+         *
+         * @param remoteParent the {@code SpanContext} used as parent.
+         * @return this.
+         * @throws NullPointerException if {@code remoteParent} is {@code null}.
+         * @see #setParent(Span)
+         * @see #setNoParent()
+         */
+        Builder setParent(SpanContext remoteParent);
+
+        /**
+         * sets the option to become a root {@code Span} for a new trace. If not set, the value of
+         * {@code Tracer.getCurrentSpan()} at {@link #startSapn()} time will be used as parent.
+         *
+         * <p>Observe that any previously set parent will be discarded.
+         *
+         * @return this.
+         */
+        Builder setNoParent();
+
+        Builder setSampler();
+
         Span startSapn();
     }
 }

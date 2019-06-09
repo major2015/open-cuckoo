@@ -16,8 +16,6 @@
 
 package com.cuckoo.tags.unsafe;
 
-import java.io.IOException;
-
 import com.cuckoo.context.Scope;
 import com.cuckoo.tags.TagMap;
 import io.grpc.Context;

@@ -71,7 +71,7 @@ public interface TagMap {
          * @param parent the {@code TagMap} used as parent.
          * @return this.
          * @throws NullPointerException if {@code parent} is {@code null}.
-         * @see @setNoParent()
+         * @see #setNoParent()
          * @since 0.0.1
          */
         Builder setParent(TagMap parent);
