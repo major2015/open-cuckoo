@@ -116,4 +116,23 @@ public final class ResourceTest {
         Resource resource = DEFAULT_RESOURCE.merge(resource1).merge(null);
         assertThat(resource.getLabels()).isEqualTo(expectedLabelMap);
     }
+
+    @Test
+    public void testCreateResources_ArgumentKey_Null() {
+        Map<String, String> labelMap = new HashMap<>();
+        labelMap.put("a", "1");
+        labelMap.put(null, "2");
+        thrown.expect(NullPointerException.class);
+        Resource.create(labelMap);
+    }
+
+    @Test
+    public void testCreateResources_ArgumentKey_Unprintable() {
+        Map<String, String> labelMap = new HashMap<>();
+        labelMap.put("a", "1");
+        labelMap.put("\2b\3", "2");
+        thrown.expect(IllegalArgumentException.class);
+        Resource.create(labelMap);
+    }
+
 }
