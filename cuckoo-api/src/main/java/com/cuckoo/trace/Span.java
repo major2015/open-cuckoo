@@ -202,7 +202,6 @@ public interface Span {
      * <p>Upon this update, any sampling behavior based on {@code Span} name will depend on the
      * implementation.
      *
-     * @param name
      */
     void updateName(String name);
 

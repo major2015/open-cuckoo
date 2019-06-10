@@ -361,11 +361,11 @@ public final class Status {
      * Equality on Statuses is not well defined. Instead, do comparison based on their
      * CanonicalCode with {@link #getCanonicalCode()}. The description of the Status is unlikely
      * to be stable, and additional fields may be added to Status in the future.
-     * @param obj
-     * @return
+     *
+     * @return true or false
      */
     @Override
-    public boolean equals(Object obj) {
+    public boolean equals(@Nullable Object obj) {
         if (obj == this) {
             return true;
         }

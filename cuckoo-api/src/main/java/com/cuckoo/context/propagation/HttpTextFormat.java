@@ -29,7 +29,6 @@ import javax.annotation.Nullable;
  * usually an http request. Propagation is usually implemented via library- specific request
  * interceptors, where the client-side injects values and the server-side extracts them.
  *
- * @param <V>
  * @since 0.0.1
  */
 public interface HttpTextFormat<V> {

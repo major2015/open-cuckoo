@@ -80,7 +80,6 @@ public interface Tagger {
      *          }
      *      }
      *  </pre>
-     * </p>
      *
      * <p>
      *     Example of usage on the server:
@@ -99,7 +98,6 @@ public interface Tagger {
      *          }
      *     }
      *     </pre>
-     * </p>
      *
      * @return the {@code BinaryFormat} for this implementation.
      * @since 0.0.1
@@ -135,7 +133,6 @@ public interface Tagger {
      *          }
      *     }
      *     </pre>
-     * </p>
      *
      * <p>
      *     Example of usage on the server:
@@ -153,7 +150,6 @@ public interface Tagger {
      *             }
      *         }
      *     </pre>
-     * </p>
      *
      * @return the {@code HttpTextFormat} for this implementation
      * @since 0.0.1
